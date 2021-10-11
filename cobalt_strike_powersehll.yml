@@ -1,0 +1,30 @@
+title: Cobalt activity within Powershell
+description: 
+    - Cobalt Strike is a red team tool that is widely used by both Pen testers and Threat actors. The tool will use Windows 
+ Management Instrument executing from a bas64 encoded PowerShell command. 
+status: stable
+references:
+    - https://blog.inspired-sec.com/archive/2017/01/20/WMI-Persistence.html
+author: Harrison Crossley
+date: 08/10/2021
+tags:
+- attack.Execution
+- attack.t1059
+logsource:
+  category: process_creation
+  product: windows
+detection:
+  selection:
+    CommandLine|matches_regex: 
+    - '[A-Za-z0-9+/]{50,}[=]{0,2}'
+    Parent_Process|equals:
+    - 'wmiprvse.exe'
+    Process|equals:
+    - 'powershell.exe"
+  exceptions:
+     CommandLine|contains:
+    -'Windows\\CCM\\'
+  condition: selection
+falsepositives:
+    - Unknown
+level: High
